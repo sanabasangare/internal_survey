@@ -1,0 +1,43 @@
+{% extends "survey/base.html" %}
+
+{% load i18n %}
+
+{% block survey_script %}
+<script type="text/javascript">
+var selection_url = '{% url "survey_ajax_selection" survey.pk %}';
+var result_url = '{% url "survey_result" survey.pk %}';
+document.addEventListener('DOMContentLoaded', function(){
+    function showResults() {
+        $.get(result_url, function(data) {
+            $("#survey_container").html(data);
+        });
+    }
+    $("#survey_send").click(function() {
+        var item = $('#survey_form input[name=item]:checked').val();
+        if (typeof item === "undefined") {
+            alert("{% trans 'Please choose one answer' %}");
+            return false;
+        }
+        $.get(selection_url, {item: item}, function() {
+            showResults();
+        });
+        return false;
+    });
+});
+</script>
+{% endblock %}
+
+{% block survey_content %}
+<div class="survey_style">
+    <form method="GET" action="." id="survey_form">
+        <p class="title">{{ survey.title }}</p>
+        <ul>
+            {% for i in items %}
+            <li><input type="radio" name="item" id="item_{{ i.id }}" value="{{ i.id }}" />
+                <label for="item_{{ i.id }}">{{ i.value }}</label></li>
+            {% endfor %}
+        </ul>
+        <p class="survey_send"><input type="button" id="survey_send" value="{% trans 'Selection' %}" /></p>
+    </form>
+</div>
+{% endblock %}
