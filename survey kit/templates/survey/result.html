@@ -1,0 +1,18 @@
+{% extends "survey/base.html" %}
+
+{% load i18n %}
+{% load survey_tags %}
+
+{% block survey_content %}
+<div class="survey_style">
+	<p class="title">{{ survey.title }}</p>
+	<ul>
+		{% for i in items %}
+		<li>{{ i.value }}: <b>{% filter floatformat %}{% percentage survey i %}{% endfilter %}%</b><br>
+			<div style="background: #a54777; border: 1px solid #d63555; height: 8px; width: {% percentage survey i %}%;"></div>
+		</li>
+		{% endfor %}
+	</ul>
+	<p>{% trans "Total selections" %}: <b>{{ survey.get_selection_count }}</b></p><br>
+</div>
+{% endblock %}
